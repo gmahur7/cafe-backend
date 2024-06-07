@@ -33,6 +33,10 @@ const signup = asyncHandler(async (req, resp) => {
 
 const login = asyncHandler(async (req, resp) => {
     const { email, password } = req.body
+    if(!email||!password){
+        resp.send({msg:"email or password is missing"})
+    }
+   try {
     const user = await UserModel.findOne({ email })
     if (user) {
         const compare = bcrypt.compareSync(password, user.password);
@@ -49,6 +53,9 @@ const login = asyncHandler(async (req, resp) => {
         resp.status(400)
         throw new Error("Invalid Id or Password")
     }
+   } catch (error) {
+        resp.send({msg:error.message})
+   }
 })
 
 module.exports = {
