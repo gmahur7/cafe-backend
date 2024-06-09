@@ -12,6 +12,7 @@ const signup = asyncHandler(async (req, resp) => {
         const userAlreadyExist = await UserModel.findOne({ email })
         if (userAlreadyExist) {
             resp.status(401).send({ msg: "Email Already Exist" })
+            return;
         }
 
         const salt = bcrypt.genSaltSync(10);
@@ -47,14 +48,12 @@ const login = asyncHandler(async (req, resp) => {
                 email: user.email,
                 token: generateToken(user._id)
             })
+            return
         }   
     }
-    else {
-        resp.status(400)
-        throw new Error("Invalid Id or Password")
-    }
+        resp.status(400).send({msg:"Invalid Id or Password"})
    } catch (error) {
-        resp.send({msg:error.message})
+        resp.status(500).send({msg:error.message})
    }
 })
 
